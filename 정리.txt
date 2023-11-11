@@ -19,3 +19,5 @@ BP_Character에서 현재 공격 아이템 슬롯에 있는 무기로 어빌리�
 -> 몽타쥬 실행중 weaponAttack 노티파이 스테이트 Begin + End 실행
 -> Event.Montage.Shared.WeaponHit 태그와 딜레이타임 딜레이 카운트를 입력으로 Weapon Attack Begin Event실행
 -> 입력한거 저장해주고 캡슐 콜리젼 Enable
+
+UPrimaryDataAsset

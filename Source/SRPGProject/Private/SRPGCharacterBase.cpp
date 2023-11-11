@@ -149,8 +149,8 @@ bool ASRPGCharacterBase::ActivateAbilitiesWithTags(FGameplayTagContainer Ability
 	{
 		return AbilitySystemComponent->TryActivateAbilitiesByTag(AbilityTags, bAllowRemoteActivation);
 	}
-	FGameplayTag AttackAbilityTag = UGameplayTagsManager::Get().RequestGameplayTag(FName("Ability.Melee"));
-	AbilitySystemComponent->GetActiveEffectsWithAllTags(AttackAbilityTag)
+	//FGameplayTag AttackAbilityTag = UGameplayTagsManager::Get().RequestGameplayTag(FName("Ability.Melee"));
+	//AbilitySystemComponent->GetActiveEffectsWithAllTags(AttackAbilityTag)
 	return false;
 }
 

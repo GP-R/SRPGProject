@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "Abilities/SRPGAbilityType.h"
 #include "SRPGAbilitySystemComponent.generated.h"
 
 
@@ -25,6 +26,12 @@ public:
 	virtual void ReceiveDamage(USRPGAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage);
 
 public:
-	//void GetActiveAbilitiesWithTags(const FGameplayTagContainer& GameplayTagContainer, TArray<USRPGGameplayAbility*>& ActiveAbilities);
+	USRPGAbilitySystemComponent();
+
+	void GetActiveAbilitiesWithTags(const FGameplayTagContainer& GameplayTagContainer, TArray<class USRPGGameplayAbility*>& ActiveAbilities);
+
+	int32 GetDefaultAbilityLevel() const;
+
+	static USRPGAbilitySystemComponent* GetAbilitySystemComponentFromActor(const AActor* Actor, bool LookForComponent = false);
 
 };
