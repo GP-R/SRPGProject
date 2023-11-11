@@ -1,0 +1,21 @@
+플레이어 마우스 왼쪽 키입력 
+-> PlayerController에 OnSetDestinationPressed함수 실행 
+->적을 공격할 수 있으면 GA_Melee 어빌리티 실행
+-> GA_Melee에서 공격 몽타주 실행
+-> AN_Attack 애님 노티파이 실행
+-> Attack이벤트 실행
+->누군가 맞았다면 Weapon.Hit게임플레이 이벤트 전송
+-> GA_Melee에서 몽타주가 재생되는 동안 Weapon.Hit게임플레이 이벤트 를 기다림
+-> Attack이벤트에서 누군가 맞았으면 Weapon.Hit게임플레이 이벤트 Send
+-> GA_Melee에서 Weapon.Hit이벤트를 받으면 Target에게 GE_Damage게임플레이 이펙트 적용
+-> PostGameplayEffectExecute함수 실행
+-> 
+
+샘플RPG 공격
+BP_Character에서 현재 공격 아이템 슬롯에 있는 무기로 어빌리티 활성 ex) GA_PlayerAxeMelee 활성
+-> GA_PlayerAxeMelee에서 AM_Attack_Axe 몽타쥬 실행
+->BP_PlayerCharacter에서 Do MeleeAttack실행
+-> 살아있는지 게임이 멈췄는지 이미 기본공격을 사용중인지 판단 후 기본공격중이면 jump combo함수 실행
+-> 몽타쥬 실행중 weaponAttack 노티파이 스테이트 Begin + End 실행
+-> Event.Montage.Shared.WeaponHit 태그와 딜레이타임 딜레이 카운트를 입력으로 Weapon Attack Begin Event실행
+-> 입력한거 저장해주고 캡슐 콜리젼 Enable
