@@ -20,6 +20,8 @@ public:
 
 	FORCEINLINE class USpringArmComponent* GetSpringArmComponent() const { return SpringArmComponent; }
 
+	FORCEINLINE class UComplexHitDebugComponent* GetHitDebugComponent() const { return HitDebugComponent; }
+
 	UFUNCTION()
 	float GetAttackRange();
 
@@ -34,7 +36,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* SpringArmComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UComplexHitDebugComponent* HitDebugComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* WeaponMeshComponent;
+	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	float AttackRange;

@@ -20,6 +20,7 @@ ASRPGCharacterBase::ASRPGCharacterBase()
 
 	Attributes = CreateDefaultSubobject<USRPGAttributeSet>("Attributes");
 	bAbilitiesInitialized = false;
+
 }
 
 UAbilitySystemComponent* ASRPGCharacterBase::GetAbilitySystemComponent() const

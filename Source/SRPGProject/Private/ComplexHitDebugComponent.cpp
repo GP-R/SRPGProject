@@ -1,44 +1,138 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "ComplexHitDebugComponent.h"
 
-// Sets default values for this component's properties
+#include "Kismet/KismetSystemLibrary.h"
+
 UComplexHitDebugComponent::UComplexHitDebugComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
-
-void UComplexHitDebugComponent::InitComponent()
+void UComplexHitDebugComponent::InitComponent(UPrimitiveComponent* WeaponComponent)
 {
-	
+	this->Weapon = WeaponComponent;
+
+	WeaponSockets = Weapon->GetAllSocketNames();
 }
 
+// 애님 노티파이 start와 end에서 호출
 void UComplexHitDebugComponent::StartHitDebug(bool bStart)
 {
-
+	if (bStart)
+	{
+		PrevSocketLocation.Empty();
+		UpdatePrevSocketLocation();
+	}
+	bHitDebugging = bStart;
 }
 
-// Called when the game starts
 void UComplexHitDebugComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
 	
 }
 
-
-// Called every frame
 void UComplexHitDebugComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (bHitDebugging && Weapon)
+	{
+		HitDebug();
+		UpdatePrevSocketLocation();
+	}
 }
 
+void UComplexHitDebugComponent::UpdatePrevSocketLocation()
+{
+	for (FName SocketName : WeaponSockets)
+	{
+		PrevSocketLocation.Add(SocketName, Weapon->GetSocketLocation(SocketName));
+	}
+}
+
+void UComplexHitDebugComponent::FirstHitCheck(TArray<FHitResult> HitArray)
+{
+	for (const FHitResult& Hit : HitArray)
+	{
+		bool bIsSameActor = HitActors.ContainsByPredicate([&](const FHitResult& HitActor) 
+			{  
+				return HitActor.Actor == Hit.Actor;
+			});
+		if (!bIsSameActor)
+		{
+			HitActors.Add(Hit);
+			OnFirstHit.Broadcast(Hit);
+		}
+	}
+	/*TArray<TWeakObjectPtr<AActor>> HitActors;
+	for (const FHitResult& Hit : HitArray)
+	{
+		bool bIsSameActor = HitActors.ContainsByPredicate([&](const TWeakObjectPtr<AActor>& HitActor) 
+			{  
+				return HitActor == Hit.Actor;
+			});
+		if (!bIsSameActor)
+		{
+			HitActors.Add(Hit.Actor);
+			OnFirstHit.Broadcast(Hit);
+		}
+	}*/
+}
+
+void UComplexHitDebugComponent::HitDebug()
+{
+	TArray<FHitResult> HitResults;
+	UObject* curWorld = this;
+	FVector Start;
+	FVector End;
+
+	for (FName WeaponSocket_1 : WeaponSockets)
+	{
+		for (FName WeaponSocket_2 : WeaponSockets)
+		{
+			Start = Weapon->GetSocketLocation(WeaponSocket_1);
+			End = *(PrevSocketLocation.Find(WeaponSocket_2));
+
+			UKismetSystemLibrary::LineTraceMulti(
+				curWorld,
+				Start,
+				End,
+				UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1),
+				true,
+				TraceIgnoreActors,
+				EDrawDebugTrace::Type::ForDuration,
+				HitResults,
+				true,
+				FLinearColor::Red,
+				FLinearColor::Green,
+				1.0f);
+
+			FirstHitCheck(HitResults);
+			HitResults.Empty();
+		}
+
+		for (FName WeaponSocket_3 : WeaponSockets)
+		{
+			Start = *(PrevSocketLocation.Find(WeaponSocket_3));
+			End = Weapon->GetSocketLocation(WeaponSocket_1);
+
+			UKismetSystemLibrary::LineTraceMulti(
+				curWorld, 
+				Start, 
+				End, 
+				UEngineTypes::ConvertToTraceType(ECC_Visibility),
+				true,
+				TraceIgnoreActors,
+				EDrawDebugTrace::Type::ForDuration,
+				HitResults,
+				true,
+				FLinearColor::Red,
+				FLinearColor::Green,
+				1.0f);
+
+			FirstHitCheck(HitResults);
+			HitResults.Empty();
+		}
+	}
+}

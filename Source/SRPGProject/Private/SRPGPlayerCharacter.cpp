@@ -4,6 +4,7 @@
 #include "SRPGPlayerCharacter.h"
 #include "SRPGPlayerController.h"
 #include "SRPGEnemyCharacter.h"
+#include "ComplexHitDebugComponent.h"
 
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
@@ -41,13 +42,19 @@ ASRPGPlayerCharacter::ASRPGPlayerCharacter()
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
 
+	HitDebugComponent = CreateDefaultSubobject<UComplexHitDebugComponent>(TEXT("HitDebugComponent"));
+
+	WeaponMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("WeaponMesh");
+	WeaponMeshComponent->SetupAttachment(GetMesh(), "hand_r");
+
 	AttackRange = 200.0f;
 }
 
 void ASRPGPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+	HitDebugComponent->InitComponent(WeaponMeshComponent);
+	HitDebugComponent->StartHitDebug(true);
 }
 
 void ASRPGPlayerCharacter::Tick(float DeltaTime)

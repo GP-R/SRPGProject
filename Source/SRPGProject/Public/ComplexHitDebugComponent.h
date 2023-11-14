@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "ComplexHitDebugComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFirstHit, FHitResult, HitResult);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SRPGPROJECT_API UComplexHitDebugComponent : public UActorComponent
@@ -15,7 +16,7 @@ class SRPGPROJECT_API UComplexHitDebugComponent : public UActorComponent
 public:	
 	UComplexHitDebugComponent();
 
-	void InitComponent();
+	void InitComponent(UPrimitiveComponent* WeaponComponent);
 
 	UFUNCTION(BlueprintCallable)
 	void StartHitDebug(bool bStart);
@@ -27,25 +28,35 @@ protected:
 	
 private:	
 	UFUNCTION()
-	void UpdateLastSocketLocation();
+	void UpdatePrevSocketLocation();
 
 	UFUNCTION()
-	void FindWeaponSocket();
+	void FirstHitCheck(TArray<FHitResult> HitArray);
+
+	UFUNCTION()
+	void HitDebug();
 
 public:
 	UPROPERTY()
 	class UPrimitiveComponent* Weapon;
 
 	UPROPERTY()
-	TArray<FHitResult> HitArray;
+	FOnFirstHit OnFirstHit;
+
+	UPROPERTY(EditAnywhere)
+	TArray<AActor*> TraceIgnoreActors;
+
+	UPROPERTY()
+	bool bHitDebugging = false;
 
 private:
 	UPROPERTY()
 	TArray<FName> WeaponSockets;
 
 	UPROPERTY()
-	TMap<FName, FVector> LastSocketLocation;
+	TMap<FName, FVector> PrevSocketLocation;
 
 	UPROPERTY()
-	bool bAttacking = false;
+	TArray<FHitResult> HitActors;
+
 };
