@@ -14,6 +14,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 
 ASRPGPlayerCharacter::ASRPGPlayerCharacter()
 {
@@ -48,13 +50,18 @@ ASRPGPlayerCharacter::ASRPGPlayerCharacter()
 	WeaponMeshComponent->SetupAttachment(GetMesh(), "hand_r");
 
 	AttackRange = 200.0f;
+	OnHitCreateEffect.BindUFunction(this, "CreateHitEffect");
 }
 
 void ASRPGPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	HitDebugComponent->InitComponent(WeaponMeshComponent);
-	HitDebugComponent->StartHitDebug(true);
+	//HitDebugComponent->StartHitDebug(true);
+
+
+
+	//HitEffect = LoadObject<UParticleSystem>(nullptr, TEXT("ParticleSystem'/Game/Art/Particle/Damage/P_PP.P_PP'"));
 }
 
 void ASRPGPlayerCharacter::Tick(float DeltaTime)
@@ -68,6 +75,29 @@ void ASRPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ASRPGPlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	HitDebugComponent->OnFirstHit.Add(OnHitCreateEffect);
+}
+
+void ASRPGPlayerCharacter::UnPossessed()
+{
+	Super::UnPossessed();
+	HitDebugComponent->OnFirstHit.Remove(OnHitCreateEffect);
+}
+
+void ASRPGPlayerCharacter::CreateHitEffect(FHitResult HitResult)
+{
+	FVector ImpactLocation = HitResult.ImpactPoint;
+	FRotator ImpactRotation = FRotationMatrix::MakeFromZ(HitResult.ImpactNormal).Rotator();
+
+	if (HitEffect)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, ImpactLocation, ImpactRotation);
+	}
 }
 
 float ASRPGPlayerCharacter::GetAttackRange()

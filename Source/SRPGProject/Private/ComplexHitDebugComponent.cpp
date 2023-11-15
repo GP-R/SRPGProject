@@ -13,6 +13,7 @@ void UComplexHitDebugComponent::InitComponent(UPrimitiveComponent* WeaponCompone
 	this->Weapon = WeaponComponent;
 
 	WeaponSockets = Weapon->GetAllSocketNames();
+	bHitDebugging = false;
 }
 
 // 애님 노티파이 start와 end에서 호출
@@ -22,6 +23,7 @@ void UComplexHitDebugComponent::StartHitDebug(bool bStart)
 	{
 		PrevSocketLocation.Empty();
 		UpdatePrevSocketLocation();
+		HitActors.Empty();
 	}
 	bHitDebugging = bStart;
 }
@@ -63,6 +65,7 @@ void UComplexHitDebugComponent::FirstHitCheck(TArray<FHitResult> HitArray)
 		{
 			HitActors.Add(Hit);
 			OnFirstHit.Broadcast(Hit);
+			UE_LOG(LogTemp, Log, TEXT("Hit"));
 		}
 	}
 	/*TArray<TWeakObjectPtr<AActor>> HitActors;

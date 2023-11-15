@@ -29,7 +29,16 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void UnPossessed() override;
 
+private:
+	UFUNCTION()
+	void CreateHitEffect(FHitResult HitResult);
+
+public:
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* CameraComponent;
 
@@ -45,4 +54,9 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	float AttackRange;
+
+	FScriptDelegate OnHitCreateEffect;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* HitEffect;
 };
