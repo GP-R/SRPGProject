@@ -68,19 +68,6 @@ void UComplexHitDebugComponent::FirstHitCheck(TArray<FHitResult> HitArray)
 			UE_LOG(LogTemp, Log, TEXT("Hit"));
 		}
 	}
-	/*TArray<TWeakObjectPtr<AActor>> HitActors;
-	for (const FHitResult& Hit : HitArray)
-	{
-		bool bIsSameActor = HitActors.ContainsByPredicate([&](const TWeakObjectPtr<AActor>& HitActor) 
-			{  
-				return HitActor == Hit.Actor;
-			});
-		if (!bIsSameActor)
-		{
-			HitActors.Add(Hit.Actor);
-			OnFirstHit.Broadcast(Hit);
-		}
-	}*/
 }
 
 void UComplexHitDebugComponent::HitDebug()

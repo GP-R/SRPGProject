@@ -24,6 +24,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	class ASRPGEnemyCharacter* GetTargetCharacter();
 
+	UFUNCTION(BlueprintCallable)
+	class UAudioComponent* GetAudioComponent() { return AudioComponent; }
+
+	UFUNCTION(BlueprintCallable)
+	class UDialogueController* GetDialogueController() { return DialogueController; }
+
+	UFUNCTION(BlueprintCallable)
+	void NextDialogue();
+
 protected:
 	uint32 bMoveToMouseCursor : 1;
 
@@ -46,4 +55,11 @@ private:
 	bool bCanAttacking;
 
 	FGameplayTagContainer LocalAbilityTags;
+
+	UPROPERTY(VisibleAnywhere)
+	class UAudioComponent* AudioComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	class UDialogueController* DialogueController;
+
 };

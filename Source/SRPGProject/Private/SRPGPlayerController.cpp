@@ -4,16 +4,21 @@
 #include "SRPGPlayerController.h"
 #include "SRPGEnemyCharacter.h"
 #include "SRPGPlayerCharacter.h"
+#include "Dialogue/DialogueController.h"
 
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Engine/World.h"
 #include "GameplayTagsManager.h"
+#include "Components/AudioComponent.h"
 
 ASRPGPlayerController::ASRPGPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 	bCanAttacking = false;
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	DialogueController = CreateDefaultSubobject<UDialogueController>(TEXT("DialogueController"));
 }
 
 void ASRPGPlayerController::BeginPlay()
@@ -22,6 +27,8 @@ void ASRPGPlayerController::BeginPlay()
 
 	FGameplayTag AttackAbilityTag = UGameplayTagsManager::Get().RequestGameplayTag(FName("Ability.Melee"));
 	LocalAbilityTags.AddTag(AttackAbilityTag);
+
+	DialogueController->Init();
 }
 
 void ASRPGPlayerController::PlayerTick(float DeltaTime)
@@ -52,10 +59,16 @@ void ASRPGPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ASRPGPlayerController::OnSetDestinationPressed);
 	InputComponent->BindAction("SetDestination", IE_Released, this, &ASRPGPlayerController::OnSetDestinationReleased);
+	InputComponent->BindAction("NextDialogue", IE_Pressed, this, &ASRPGPlayerController::NextDialogue);
 	//InputComponent->BindAction("SetDestination", IE_Repeat, this, &ASRPGPlayerController::MoveToTouchLocation);
 
 	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ASRPGPlayerController::MoveToTouchLocation);
 	//InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ASRPGPlayerController::MoveToTouchLocation);
+}
+
+void ASRPGPlayerController::NextDialogue()
+{
+	DialogueController->PrintDialogue();
 }
 
 void ASRPGPlayerController::MoveToMouseCursor()

@@ -16,6 +16,7 @@
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
+#include "GameplayTagsManager.h"
 
 ASRPGPlayerCharacter::ASRPGPlayerCharacter()
 {
@@ -51,17 +52,13 @@ ASRPGPlayerCharacter::ASRPGPlayerCharacter()
 
 	AttackRange = 200.0f;
 	OnHitCreateEffect.BindUFunction(this, "CreateHitEffect");
+	OnHitSendEventToActor.BindUFunction(this, "SendHitEventToActor");
 }
 
 void ASRPGPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	HitDebugComponent->InitComponent(WeaponMeshComponent);
-	//HitDebugComponent->StartHitDebug(true);
-
-
-
-	//HitEffect = LoadObject<UParticleSystem>(nullptr, TEXT("ParticleSystem'/Game/Art/Particle/Damage/P_PP.P_PP'"));
 }
 
 void ASRPGPlayerCharacter::Tick(float DeltaTime)
@@ -81,12 +78,14 @@ void ASRPGPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	HitDebugComponent->OnFirstHit.Add(OnHitCreateEffect);
+	HitDebugComponent->OnFirstHit.Add(OnHitSendEventToActor);
 }
 
 void ASRPGPlayerCharacter::UnPossessed()
 {
 	Super::UnPossessed();
 	HitDebugComponent->OnFirstHit.Remove(OnHitCreateEffect);
+	HitDebugComponent->OnFirstHit.Remove(OnHitSendEventToActor);
 }
 
 void ASRPGPlayerCharacter::CreateHitEffect(FHitResult HitResult)
@@ -97,6 +96,23 @@ void ASRPGPlayerCharacter::CreateHitEffect(FHitResult HitResult)
 	if (HitEffect)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, ImpactLocation, ImpactRotation);
+	}
+}
+
+void ASRPGPlayerCharacter::SendHitEventToActor(FHitResult HitResult)
+{
+	ASRPGEnemyCharacter* EnemyData = Cast<ASRPGEnemyCharacter>(HitResult.GetActor());
+	if (EnemyData)
+	{
+		FGameplayEventData EventData;
+		EventData.Instigator = GetInstigator();
+		EventData.Target = HitResult.GetActor();
+		FGameplayAbilityTargetData_SingleTargetHit* TargetData = new FGameplayAbilityTargetData_SingleTargetHit();
+		TargetData->HitResult = HitResult;
+		EventData.TargetData.Add(TargetData);
+		FGameplayTag HitTag = UGameplayTagsManager::Get().RequestGameplayTag(FName("Weapon.Hit"));
+
+		GetAbilitySystemComponent()->HandleGameplayEvent(HitTag, &EventData);
 	}
 }
 

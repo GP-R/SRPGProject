@@ -36,6 +36,9 @@ private:
 	UFUNCTION()
 	void CreateHitEffect(FHitResult HitResult);
 
+	UFUNCTION()
+	void SendHitEventToActor(FHitResult HitResult);
+
 public:
 
 protected:
@@ -55,8 +58,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	float AttackRange;
 
-	FScriptDelegate OnHitCreateEffect;
-
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* HitEffect;
+
+	FScriptDelegate OnHitCreateEffect;
+	FScriptDelegate OnHitSendEventToActor;
 };
