@@ -20,7 +20,9 @@ public class SRPGProject : ModuleRules
 			"UMG", 
 			"GameplayCameras",
 			"AIModule",
-			"BlueprintGraph"
+			"BlueprintGraph",
+			"NavigationSystem",
+			"GameplayTasks"
 		});
 	}
 }

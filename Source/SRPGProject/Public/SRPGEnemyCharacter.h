@@ -14,4 +14,12 @@ class SRPGPROJECT_API ASRPGEnemyCharacter : public ASRPGCharacterBase
 {
 	GENERATED_BODY()
 	
+public:
+	ASRPGEnemyCharacter();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* AttackMontage;
+
+	UFUNCTION(BlueprintCallable)
+	void Attack();
 };

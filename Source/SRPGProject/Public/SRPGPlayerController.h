@@ -33,6 +33,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void NextDialogue();
 
+	UFUNCTION(BlueprintCallable)
+	void ShowInventory();
+
+	UFUNCTION(BlueprintCallable)
+	class UInventory* GetInventory();
+
 protected:
 	uint32 bMoveToMouseCursor : 1;
 
@@ -62,4 +68,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UDialogueController* DialogueController;
 
+	UPROPERTY(VisibleAnywhere)
+	class UInventory* Inventory;
 };

@@ -15,5 +15,9 @@ class SRPGPROJECT_API USRPGAssetManager : public UAssetManager
 	GENERATED_BODY()
 	
 public:
+	static const FPrimaryAssetType	UseItemType;
+	static const FPrimaryAssetType	EquipmentItemType;
+	static const FPrimaryAssetType	EtcItemType;
+
 	virtual void StartInitialLoading() override;
 };

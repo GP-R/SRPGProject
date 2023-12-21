@@ -5,6 +5,7 @@
 #include "SRPGEnemyCharacter.h"
 #include "SRPGPlayerCharacter.h"
 #include "Dialogue/DialogueController.h"
+#include "Inventory/Inventory.h"
 
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Engine/World.h"
@@ -19,6 +20,7 @@ ASRPGPlayerController::ASRPGPlayerController()
 
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	DialogueController = CreateDefaultSubobject<UDialogueController>(TEXT("DialogueController"));
+	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 }
 
 void ASRPGPlayerController::BeginPlay()
@@ -60,10 +62,16 @@ void ASRPGPlayerController::SetupInputComponent()
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ASRPGPlayerController::OnSetDestinationPressed);
 	InputComponent->BindAction("SetDestination", IE_Released, this, &ASRPGPlayerController::OnSetDestinationReleased);
 	InputComponent->BindAction("NextDialogue", IE_Pressed, this, &ASRPGPlayerController::NextDialogue);
+	InputComponent->BindAction("Inventory", IE_Pressed, this, &ASRPGPlayerController::ShowInventory);
 	//InputComponent->BindAction("SetDestination", IE_Repeat, this, &ASRPGPlayerController::MoveToTouchLocation);
 
 	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ASRPGPlayerController::MoveToTouchLocation);
 	//InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ASRPGPlayerController::MoveToTouchLocation);
+}
+
+void ASRPGPlayerController::ShowInventory()
+{
+	Inventory->ShowInventoryWidget();
 }
 
 void ASRPGPlayerController::NextDialogue()
@@ -156,4 +164,9 @@ bool ASRPGPlayerController::GetCanAttacking()
 ASRPGEnemyCharacter* ASRPGPlayerController::GetTargetCharacter()
 {
 	return Target;
+}
+
+UInventory* ASRPGPlayerController::GetInventory()
+{
+	return Inventory;
 }

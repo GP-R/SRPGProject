@@ -2,4 +2,20 @@
 
 
 #include "SRPGEnemyCharacter.h"
+#include "AI/SRPGAIController.h"
 
+#include "Animation/AnimMontage.h"
+
+ASRPGEnemyCharacter::ASRPGEnemyCharacter()
+{
+	AIControllerClass = ASRPGAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+}
+
+void ASRPGEnemyCharacter::Attack()
+{
+    if (AttackMontage)
+    {
+        PlayAnimMontage(AttackMontage);
+    }
+}
